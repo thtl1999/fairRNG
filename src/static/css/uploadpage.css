@@ -21,7 +21,7 @@ header{
     margin: 0 auto;
 }
 
-#filebox, #btn{
+#filebox{
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -29,4 +29,20 @@ header{
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+.padding1{
+    padding-top: 70px;
+}
+
+#list_table{
+    width: 400px;
+}
+
+.options{
+    margin:auto;
+}
+
+td{
+    padding:0,15px,0,15px;
 }

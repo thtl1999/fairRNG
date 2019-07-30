@@ -10,15 +10,32 @@
             <a href="/">Search</a>
         </div>
         <header>
-            <h1>Fair Pick Upload Contact</h1>
+            <h1>Create Fair Pick</h1>
         </header>
         <section class="content">
-            <div class="filearea">
-                <input id="filebox" name="abc" type="file" placeholder="Paste address here"/>
-                <input id="btn" type="button" value="Search" onclick="search()">
+            <div class="filearea">Upload a text file
+                <input id="filebox" type="file"/>
             </div>
+            <div class="padding1"></div>
+            <div class="list_div">
+                <div class="list_table_div">
+                    <form>
+                        <select id="list_table" size="10">
+                            <option></option>
+                        </select>
+                    </form>
+                </div>
+                <div class="list_buttons">
+                    <button type="button" onclick="insert_button_func()">Insert item</button>
+                    <button type="button" onclick="delete_button_func()">Delete item</button>
+                </div>
+            </div>
+            <div class="padding1"></div>
+            <table class="options">
+                <tr><td>Passing blocks</td><td><input id="input_box_time"></td></tr>
+            </table>
         </section>
     </div>
-</body>
     <script src="/js/uploadpage.js"></script>
+</body>
 </html>
