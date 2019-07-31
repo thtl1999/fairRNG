@@ -16,12 +16,11 @@ header{
     text-align: center;
 }
 .filearea{
-    padding-top: 10%;
     max-width: 700px;
     margin: 0 auto;
 }
 
-#filebox, #upload_btn{
+#filebox, #upload_btn, #title_box{
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -29,6 +28,10 @@ header{
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+#title_box{
+    width: 60%;
 }
 
 .list_btn{

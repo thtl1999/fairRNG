@@ -6,11 +6,11 @@ const app = express();
 const port = 8080;
 
 const solc = require('solc');
-const base_code = fs.readFileSync('./data/base-random.sol','UTF-8');
+const base_code = fs.readFileSync('data/base-random.sol','UTF-8');
 
 
-app.use('/css', express.static('./static/css'))
-app.use('/js', express.static('./static/js'))
+app.use('/css', express.static('static/css'))
+app.use('/js', express.static('static/js'))
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -26,15 +26,68 @@ app.listen(port, function(err) {
 });
 
 function givehtml(response, page){
-    fs.readFile('./static/' + page + '.html', function(err, data) {
+    fs.readFile('static/' + page + '.html', function(err, data) {
         if(err) {
             response.send('error');
         }else{
-            response.writeHead(200, {'Content-Type':'text/html'})
-            response.write(data)
-            response.end()
+            response.writeHead(200, {'Content-Type':'text/html'});
+            response.write(data);
+            response.end();
         }
     });
+}
+
+async function searchresponse(response, addr, index){
+
+    var index_per_page = 10;
+    var html_table = '';
+    try{
+        //read dir and convert files name(string) to int
+        var files = fs.readdirSync('data/addr/' + addr).map(function(v) {
+            return parseInt(v, 10);
+        });
+    }catch(e){
+        givehtml(response,'nothingsearch');
+        return;
+    }
+    
+    
+    if (files.length < 1 + index*index_per_page){
+        givehtml(response,'nothingsearch');
+        return;
+    }
+
+
+    for(var i=index*index_per_page;i<(index+1)*index_per_page && i<files.length;i++)
+    {
+        var info = await JSON.parse(fs.readFileSync('data/addr/' + addr + '/' + String(i)));
+        var t = new Date(info.date);
+        html_table += '<tr><td><a href="/data/' + info.account_addr + '/' 
+        + String(i) + '">' + info.title + '</a></td><td>' 
+        + info.tx_addr + '</td><td>' + t.toGMTString() + '</td></tr>\n';
+    }
+
+
+
+    var html = fs.readFileSync('static/searchpage.html','UTF-8');
+    html = html.replace('TABLE_DATA',html_table);
+    html = html.replace('ADDRESS_DATA',info.account_addr);
+    html = html.replace('INDEX_NUMBER',String(index));
+
+    if (index == 0)
+        html = html.replace('LEFT_AR','hidden');
+    else
+        html = html.replace('LEFT_AR','visible');
+    if (files.length < 1 + (index+1)*index_per_page)
+        html = html.replace('RIGHT_AR','hidden');
+    else
+        html = html.replace('RIGHT_AR','visible');
+
+    
+    response.writeHead(200, {'Content-Type':'text/html'});
+    response.write(html);
+    response.end();
+
 }
 
 
@@ -50,10 +103,43 @@ app.get('/upload', function(request, response) {
     
 });
 
-app.post('/create', function(request, response) {
-    console.log(request.body);
-    response.json({url:'123'});
+app.get('/search/:addr', function(request, response) {
+    searchresponse(response, request.params.addr, 0);
+});
+
+app.get('/search/:addr/:index', function(request, response) {
+    searchresponse(response, request.params.addr, Number(request.params.index));
+});
+
+app.post('/create', async function(request, response) {
+    var data = {
+        date: Date.now(),
+        account_addr: request.body.account_addr,
+        tx_addr: request.body.tx_addr,
+        list_data: request.body.list_data,
+        title: request.body.title
+    }
+    
+    var page = await save_contract(data);
+    response.json({url:page});
+    
 })
+
+function save_contract(data){
+    var path = 'data/addr/' + data.account_addr;
+    
+    if (!fs.existsSync(path)) {
+        fs.mkdirSync(path);
+    }
+
+    var files = fs.readdirSync(path);
+    var n = String(files.length); 
+
+    fs.writeFileSync(path + '/' + n, JSON.stringify(data));
+    var page = '/data/' + data.account_addr + '/' + n;
+    return page;
+}
+
 
 function compile_sol(target_block, name_arr){
     var sol_code = base_code;

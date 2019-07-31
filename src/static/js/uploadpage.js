@@ -50,12 +50,19 @@ function delete_button_func(){
 
 async function upload(){
     //should get Tx, account address
-    var tx_addr = generate_256();
-    var account_addr = generate_256();
+    var tx_addr = generate_hash(64);
+    var account_addr = '0xc14BeadB8B32eE7fD0D86B53521fFca1271503d2';
+    //var account_addr = generate_hash(40);
+    var list_data = document.getElementById("list_table").innerText.split('\n');
+    var title = document.getElementById("title_box").value;
+    if (title == '') title = 'Untitled';
+    
     
     var data_set = {
-        tx_addr: tx_addr,
-        account_addr: account_addr
+        tx_addr: tx_addr.toLowerCase(),
+        account_addr: account_addr.toLowerCase(),
+        list_data: list_data,
+        title: title
     };
 
     const rawResponse = await fetch('/create', {
@@ -72,11 +79,11 @@ async function upload(){
 
 }
 
-//generate random 256bit hex number and return with 0x
-function generate_256(){
+//generate random hex number (h length) and return with 0x
+function generate_hash(h){
     var n = '';
     
-    for(var i=0;i<8;i++){
+    for(var i=0;i<h/8;i++){
         var r = Math.floor(Math.random()*4294967295).toString(16);
         r = '00000000' + r;
         r = r.slice(-8);
