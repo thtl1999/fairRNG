@@ -48,26 +48,41 @@ function delete_button_func(){
     list_table.remove(list_table.selectedIndex);
 }
 
+async function upload(){
+    //should get Tx, account address
+    var tx_addr = generate_256();
+    var account_addr = generate_256();
+    
+    var data_set = {
+        tx_addr: tx_addr,
+        account_addr: account_addr
+    };
 
-
-// code from https://stackoverflow.com/questions/469357/html-text-input-allow-only-numeric-input
-// Restricts input for the given textbox to the given inputFilter.
-function setInputFilter(textbox, inputFilter) {
-  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
-    textbox.addEventListener(event, function() {
-      if (inputFilter(this.value)) {
-        this.oldValue = this.value;
-        this.oldSelectionStart = this.selectionStart;
-        this.oldSelectionEnd = this.selectionEnd;
-      } else if (this.hasOwnProperty("oldValue")) {
-        this.value = this.oldValue;
-        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-      }
+    const rawResponse = await fetch('/create', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data_set)
     });
-  });
+    const content = await rawResponse.json();
+
+    console.log(content);
+
 }
 
-// Restrict input to digits and '.' by using a regular expression filter.
-setInputFilter(document.getElementById("input_box_time"), function(value) {
-  return /^\d*$/.test(value);
-});
+//generate random 256bit hex number and return with 0x
+function generate_256(){
+    var n = '';
+    
+    for(var i=0;i<8;i++){
+        var r = Math.floor(Math.random()*4294967295).toString(16);
+        r = '00000000' + r;
+        r = r.slice(-8);
+        n = n + r;
+    }
+    n = '0x' + n;
+    console.log(n);
+    return n;
+}

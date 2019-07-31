@@ -13,7 +13,7 @@
             <h1>Create Fair Pick</h1>
         </header>
         <section class="content">
-            <div class="filearea">Upload a text file
+            <div class="filearea"><b>Upload a text file</b>
                 <input id="filebox" type="file"/>
             </div>
             <div class="padding1"></div>
@@ -21,19 +21,18 @@
                 <div class="list_table_div">
                     <form>
                         <select id="list_table" size="10">
-                            <option></option>
                         </select>
                     </form>
                 </div>
                 <div class="list_buttons">
-                    <button type="button" onclick="insert_button_func()">Insert item</button>
-                    <button type="button" onclick="delete_button_func()">Delete item</button>
+                    <input class="list_btn" type="button" onclick="insert_button_func()" value="Insert item">
+                    <input class="list_btn" type="button" onclick="delete_button_func()" value="Delete item">
                 </div>
             </div>
             <div class="padding1"></div>
-            <table class="options">
-                <tr><td>Passing blocks</td><td><input id="input_box_time"></td></tr>
-            </table>
+            <div class="upload_div">
+                <input id="upload_btn" type="button" value="Upload" onclick="upload()">
+            </div>
         </section>
     </div>
     <script src="/js/uploadpage.js"></script>

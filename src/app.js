@@ -1,5 +1,6 @@
 const express = require('express'); // express 모듈 추가하기
 const fs = require('fs');
+const bodyParser = require('body-parser')
 
 const app = express();
 const port = 8080;
@@ -10,6 +11,12 @@ const base_code = fs.readFileSync('./data/base-random.sol','UTF-8');
 
 app.use('/css', express.static('./static/css'))
 app.use('/js', express.static('./static/js'))
+
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+
+
 
 app.listen(port, function(err) {
     console.log('Connected port' + port);
@@ -32,16 +39,21 @@ function givehtml(response, page){
 
 
 app.get('/', function(request, response) {
-    var page = 'mainpage'
+    var page = 'mainpage';
     givehtml(response, page);
     
 });
 
 app.get('/upload', function(request, response) {
-    var page = 'uploadpage'
+    var page = 'uploadpage';
     givehtml(response, page);
     
 });
+
+app.post('/create', function(request, response) {
+    console.log(request.body);
+    response.json({url:'123'});
+})
 
 function compile_sol(target_block, name_arr){
     var sol_code = base_code;
@@ -76,5 +88,5 @@ function compile_sol(target_block, name_arr){
     return compiled.contracts['base-code.sol']['fair_random'].evm.bytecode.object;
 }
 
-var bytecode = compile_sol(16,['123','456','789']);
-console.log(bytecode);
+//var bytecode = compile_sol(16,['123','456','789']);
+//console.log(bytecode);

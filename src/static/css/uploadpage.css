@@ -21,10 +21,19 @@ header{
     margin: 0 auto;
 }
 
-#filebox{
+#filebox, #upload_btn{
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.list_btn{
+    padding: 12px 20px;
+    margin: 8px 30px;
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -43,6 +52,10 @@ header{
     margin:auto;
 }
 
-td{
-    padding:0,15px,0,15px;
+.options td{
+    padding-right:25px;
+}
+
+#time_info{
+    color:cornflowerblue;
 }
