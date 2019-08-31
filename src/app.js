@@ -1,6 +1,7 @@
 const express = require('express'); // express 모듈 추가하기
 const fs = require('fs');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const fetch = require('node-fetch');
 
 const app = express();
 const port = 8080;
@@ -123,7 +124,22 @@ app.post('/create', async function(request, response) {
     var page = await save_contract(data);
     response.json({url:page});
     
-})
+});
+
+app.post('/compile', async function(request, response) {
+    var data = request.body.data;
+    console.log(data);
+
+    const res = await fetch('https://api-ropsten.etherscan.io/api?module=proxy&action=eth_blockNumber');
+    const block_info = await res.json();
+    console.log(block_info);
+    const block_num = await parseInt(block_info.result);
+    
+    console.log(block_num);
+    var compiledCode = await compile_sol(block_num,data);
+    response.json({code:compiledCode});
+    
+});
 
 function save_contract(data){
     var path = 'data/addr/' + data.account_addr;

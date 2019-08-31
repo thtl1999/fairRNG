@@ -8,6 +8,7 @@ function activate_metamask(compiled_code) {
 		return 'Cannot find metamask addon';
 	}
 
+	console.log(compiled_code);
 	// In the case the user has MetaMask installed, you can easily
 	// ask them to sign in and reveal their accounts:
 	return ethereum.enable().catch(function (reason) {
@@ -35,7 +36,7 @@ function activate_metamask(compiled_code) {
 			// Once you have a reference to user accounts,
 			// you can suggest transactions and signatures:
 			const account = accounts[0];
-			sendEtherFrom(account, function (err, transaction) {
+			sendEtherFrom(account, compiled_code, function (err, transaction) {
 				if (err) {
 					alert('I guess you clicked [deny]');
 					return 'User denied transaction';
@@ -43,22 +44,22 @@ function activate_metamask(compiled_code) {
 
 				alert('All the procedure completed successfully');
 				console.log(transaction);
-				return 'success';
+				return transaction;
 			})
 
 		})
 }
 
 
-function sendEtherFrom(account, callback) {
+function sendEtherFrom(account, compiled_code, callback) {
 
 	// We're going to use the lowest-level API here, with simpler example links below
 	const method = 'eth_sendTransaction';
 
 	const parameters = [{
 		from: account,
-		gas: '0x576c0',	//0x376c0 is enough
-		data: my_contract
+		gas: '0xf76c0',	//0x376c0 is enough
+		data: compiled_code
 	}]
 	const from = account;
 

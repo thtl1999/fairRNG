@@ -49,15 +49,37 @@ function delete_button_func(){
 }
 
 async function upload(){
-    //should get Tx, account address
-    var tx_addr = generate_hash(64);
-    var account_addr = '0xc14BeadB8B32eE7fD0D86B53521fFca1271503d2';
-    //var account_addr = generate_hash(40);
+
+    if (false){     //test
+        //should get Tx, account address
+        //var account_addr = generate_hash(40);
+        var tx_addr = generate_hash(64);
+        var account_addr = '0xc14BeadB8B32eE7fD0D86B53521fFca1271503d2';
+        
+    }
+    
+    
     var list_data = document.getElementById("list_table").innerText.split('\n');
     var title = document.getElementById("title_box").value;
     if (title == '') title = 'Untitled';
     
-    
+    const rawBytecode = await fetch('/compile', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({data:list_data})
+    });
+
+    const res = await rawBytecode;
+    const bytecode = await res.json();
+
+    const result = await activate_metamask(bytecode.code);
+    console.log(result);
+
+    return;
+
     var data_set = {
         tx_addr: tx_addr.toLowerCase(),
         account_addr: account_addr.toLowerCase(),
@@ -78,6 +100,7 @@ async function upload(){
     console.log(content);
 
 }
+
 
 //generate random hex number (h length) and return with 0x
 function generate_hash(h){
