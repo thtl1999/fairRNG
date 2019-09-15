@@ -112,36 +112,47 @@ app.get('/search/:addr/:index', function(request, response) {
     searchresponse(response, request.params.addr, Number(request.params.index));
 });
 
-app.post('/create', async function(request, response) {
-    var data = {
-        date: Date.now(),
-        account_addr: request.body.account_addr,
-        tx_addr: request.body.tx_addr,
-        list_data: request.body.list_data,
-        title: request.body.title
-    }
-    
-    var page = await save_contract(data);
-    response.json({url:page});
-    
-});
-
 app.post('/compile', async function(request, response) {
+    const wait_block_num = 10;
     var data = request.body.data;
-    console.log(data);
+    var addr = request.body.addr;
+    var title = request.body.title;
+    //console.log(data);
 
     const res = await fetch('https://api-ropsten.etherscan.io/api?module=proxy&action=eth_blockNumber');
     const block_info = await res.json();
-    console.log(block_info);
+    //console.log(block_info);
     const block_num = await parseInt(block_info.result);
     
-    console.log(block_num);
-    var compiledCode = await compile_sol(block_num,data);
-    response.json({code:compiledCode});
+    //console.log(block_num);
+    var compiledCode = await compile_sol(block_num + wait_block_num,data);
+
+
+    var page = await save_contract(compiledCode,data,addr,title);
+
+    response.json({code:compiledCode,page:page});
     
 });
 
-function save_contract(data){
+app.post('/txresult', async function(request, response) {
+    const tx = request.body.data;
+    const page = request.body.page;
+
+    console.log(tx);
+    
+});
+
+//save ethereum address and code
+function save_contract(code,list,addr,title){
+    var data = {
+        date: Date.now(),
+        account_addr: addr,
+        tx_addr: 0,
+        list_data: list,
+        title: title,
+        code: code
+    }
+
     var path = 'data/addr/' + data.account_addr;
     
     if (!fs.existsSync(path)) {
@@ -154,6 +165,11 @@ function save_contract(data){
     fs.writeFileSync(path + '/' + n, JSON.stringify(data));
     var page = '/data/' + data.account_addr + '/' + n;
     return page;
+}
+
+//save tx hash
+function modify_contract(data){
+
 }
 
 

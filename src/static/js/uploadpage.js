@@ -69,35 +69,17 @@ async function upload(){
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({data:list_data})
+        body: JSON.stringify({
+            data:list_data,
+            addr:window.ethereum.selectedAddress.toLowerCase(),
+            title: title
+        })
     });
 
     const res = await rawBytecode;
     const bytecode = await res.json();
 
-    const result = await activate_metamask(bytecode.code);
-    console.log(result);
-
-    return;
-
-    var data_set = {
-        tx_addr: tx_addr.toLowerCase(),
-        account_addr: account_addr.toLowerCase(),
-        list_data: list_data,
-        title: title
-    };
-
-    const rawResponse = await fetch('/create', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data_set)
-    });
-    const content = await rawResponse.json();
-
-    console.log(content);
+    const result = activate_metamask(bytecode.code, bytecode.page);
 
 }
 

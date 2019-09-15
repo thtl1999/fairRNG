@@ -2,7 +2,7 @@ const desiredNetwork = '3' // '1' is the Ethereum main network ID. '3' is ropste
 
 // Detect whether the current browser is ethereum-compatible,
 // and handle the case where it isn't:
-function activate_metamask(compiled_code) {
+function activate_metamask(compiled_code, page) {
 	if (typeof window.ethereum === 'undefined') {
 		alert('Looks like you need a Dapp browser to get started.\nConsider installing MetaMask!');
 		return 'Cannot find metamask addon';
@@ -36,7 +36,7 @@ function activate_metamask(compiled_code) {
 			// Once you have a reference to user accounts,
 			// you can suggest transactions and signatures:
 			const account = accounts[0];
-			sendEtherFrom(account, compiled_code, function (err, transaction) {
+			sendEtherFrom(account, compiled_code, async function (err, transaction) {
 				if (err) {
 					alert('I guess you clicked [deny]');
 					return 'User denied transaction';
@@ -44,7 +44,17 @@ function activate_metamask(compiled_code) {
 
 				alert('All the procedure completed successfully');
 				console.log(transaction);
-				return transaction;
+
+				const result_send = await fetch('/txresult', {
+					method: 'POST',
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({data:transaction,page:page})
+				});
+				
+				window.location.href = '/data/' + transaction.from + '/' + page;
 			})
 
 		})
