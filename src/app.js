@@ -137,8 +137,16 @@ app.post('/compile', async function(request, response) {
 app.post('/txresult', async function(request, response) {
     const tx = request.body.data;
     const page = request.body.page;
+    const path = 'data/addr/' + tx.from + '/' + page;
+    console.log(path);
 
-    console.log(tx);
+    let serverdata = fs.readFileSync(path);
+    let serverjson = await JSON.parse(serverdata);
+    if (serverjson.account_addr == tx.from && '0x' + serverjson.code == tx.input){
+        serverjson.txdata = tx;
+        fs.writeFileSync(path, JSON.stringify(serverjson));
+        response.json({})
+    }
     
 });
 
@@ -163,7 +171,7 @@ function save_contract(code,list,addr,title){
     var n = String(files.length); 
 
     fs.writeFileSync(path + '/' + n, JSON.stringify(data));
-    var page = '/data/' + data.account_addr + '/' + n;
+    var page = n //'/data/' + data.account_addr + '/' + n;
     return page;
 }
 

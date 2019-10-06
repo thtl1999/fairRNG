@@ -50,6 +50,8 @@ function delete_button_func(){
 
 async function upload(){
 
+    await window.ethereum.enable();
+
     if (false){     //test
         //should get Tx, account address
         //var account_addr = generate_hash(40);
