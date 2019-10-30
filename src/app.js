@@ -121,20 +121,16 @@ app.get('/data/:addr/:page', function(request, response) {
 });
 
 
-app.get('/reqtxdata', async function(request, response) {
+app.get('/reqtxdata/:addr/:page', async function(request, response) {
     try{
-        var txdata = await JSON.parse(fs.readFileSync('data/addr/' + addr + '/' + page));
+        var txdata = await JSON.parse(fs.readFileSync('data/addr/' + request.params.addr + '/' + request.params.page));
     }catch(e){
+        console.log('tx data request error');
         givehtml(response,'nothingsearch');
         return;
     }
 
-
-    var html = fs.readFileSync('static/txpage.html','UTF-8');
-    
-
-
-
+    response.json(txdata);
 });
 
 app.post('/compile', async function(request, response) {
@@ -153,7 +149,7 @@ app.post('/compile', async function(request, response) {
     var compiledCode = await compile_sol(block_num + wait_block_num,data);
 
 
-    var page = await save_contract(compiledCode,data,addr,title);
+    var page = await save_contract('0x'+compiledCode,data,addr,title);
 
     response.json({code:compiledCode,page:page});
     
@@ -167,7 +163,7 @@ app.post('/txresult', async function(request, response) {
 
     let serverdata = fs.readFileSync(path);
     let serverjson = await JSON.parse(serverdata);
-    if (serverjson.account_addr == tx.from && '0x' + serverjson.code == tx.input){
+    if (serverjson.account_addr == tx.from && serverjson.code == tx.input){
         serverjson.txdata = tx;
         fs.writeFileSync(path, JSON.stringify(serverjson));
         response.json({})
