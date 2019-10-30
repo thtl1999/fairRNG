@@ -59,13 +59,16 @@ async function searchresponse(response, addr, index){
     }
 
 
-    for(var i=index*index_per_page;i<(index+1)*index_per_page && i<files.length;i++)
+    for(var i=files.length - index*index_per_page -1;
+        i > files.length - (index+1)*index_per_page -1 && i >= 0; i--)
     {
         var info = await JSON.parse(fs.readFileSync('data/addr/' + addr + '/' + String(i)));
         var t = new Date(info.date);
+        var tx_addr = info.tx_addr;
+        if ('txdata' in info) tx_addr = info.txdata.hash;
         html_table += '<tr><td><a href="/data/' + info.account_addr + '/' 
         + String(i) + '">' + info.title + '</a></td><td>' 
-        + info.tx_addr + '</td><td>' + t.toGMTString() + '</td></tr>\n';
+        + tx_addr + '</td><td>' + t.toGMTString() + '</td></tr>\n';
     }
 
 
@@ -110,6 +113,28 @@ app.get('/search/:addr', function(request, response) {
 
 app.get('/search/:addr/:index', function(request, response) {
     searchresponse(response, request.params.addr, Number(request.params.index));
+});
+
+app.get('/data/:addr/:page', function(request, response) {
+    var page = 'txpage'
+    givehtml(response, page);
+});
+
+
+app.get('/reqtxdata', async function(request, response) {
+    try{
+        var txdata = await JSON.parse(fs.readFileSync('data/addr/' + addr + '/' + page));
+    }catch(e){
+        givehtml(response,'nothingsearch');
+        return;
+    }
+
+
+    var html = fs.readFileSync('static/txpage.html','UTF-8');
+    
+
+
+
 });
 
 app.post('/compile', async function(request, response) {

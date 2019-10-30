@@ -1,0 +1,47 @@
+.container{
+    display: flex;
+    flex-direction: column;
+}
+.top{
+    text-align: right;
+}
+header{
+    border-bottom:2px solid gray;
+    text-align: center;
+}
+.content{
+    
+    padding-left: 5%;
+    padding-right: 5%;
+    text-align: center;
+}
+
+#addr_title{
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.padding1{
+    padding-top: 40px;
+}
+
+.tx_list{
+    margin:auto;
+    background-color:snow;
+}
+
+.tx_list th{
+    padding: 10px;
+    border-bottom: 3px solid #168;
+    text-align: left;
+}
+
+.tx_list td{
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.index_div{
+    font-size: 100px;
+}
+
