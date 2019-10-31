@@ -30,7 +30,7 @@ async function verify_all(){
     var r = document.getElementById('t_result');
     r.innerHTML = '';
 
-    add_result('Testing 7 elements...',true);
+    add_result('Testing 3 elements...',true);
 
     const bt_raw_data = await fetch('https://api-ropsten.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=' + json_data.txdata.hash);
     const bt_raw = await bt_raw_data.json();
@@ -61,6 +61,27 @@ async function verify_all(){
         add_result('Timestamp error',false);
 
     
+    const abi_raw_data = await fetch('/abi');
+    const abi = await abi_raw_data.json();
+
+    const contract = web3.eth.contract(abi).at(bt.creates);
+
+
+    contract.show_target_block({},async function(err, res){
+        target_block_num = String(res.c[0]);
+        console.log(target_block_num);
+
+        const target_block = await fetch('https://api-ropsten.etherscan.io/api?module=block&action=getblockreward&blockno=' + target_block_num);
+        const target_block_info = await target_block.json();
+        const target_block_hash = parseInt(target_block_info.result.hash);
+
+        contract.show_result(target_block_hash,json_data.list_data.length,{},async function(err, res){
+            var results = res.split(',');
+            for(i=0;i<results.length -1;i++)
+                add_list(String(i+1) +'. ' + results[i]);
+            
+        });
+    });
 
 }
 
@@ -72,8 +93,20 @@ function add_result(str,result){
     if (result)
         txt += '✔️';
     else
+    {
         txt += '❌';
+        is_approved = false;
+    }
+        
     p.appendChild(document.createTextNode(txt));
+    r.appendChild(p);
+}
+
+function add_list(str){
+    var r = document.getElementById('t_list');
+    var p = document.createElement('p');
+        
+    p.appendChild(document.createTextNode(str));
     r.appendChild(p);
 }
 
@@ -83,5 +116,6 @@ var addr = url[url.length -2];
 var page = url[url.length -1];
 
 json_data = 0;
+is_approved = true;
 
 load_from_server(addr,page);

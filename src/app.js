@@ -120,6 +120,11 @@ app.get('/data/:addr/:page', function(request, response) {
     givehtml(response, page);
 });
 
+app.get('/abi', function(request, response) {
+    let abi_raw = fs.readFileSync('data/abi.json');
+    response.json(JSON.parse(abi_raw));
+});
+
 
 app.get('/reqtxdata/:addr/:page', async function(request, response) {
     try{
@@ -207,7 +212,7 @@ function compile_sol(target_block, name_arr){
     var name_str = '';
 
     for(var i=0;i<name_arr.length;i++){
-        name_str += '\"' + name_arr[i] + '\"' + ',';
+        name_str += '\"' + name_arr[i] + ',' + '\"' + ',';
     }
     name_str = name_str.slice(0, -1);
 
