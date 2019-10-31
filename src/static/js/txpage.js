@@ -77,6 +77,7 @@ async function verify_all(){
 
         contract.show_result(target_block_hash,json_data.list_data.length,{},async function(err, res){
             var results = res.split(',');
+            document.getElementById('t_list').innerHTML = '';
             for(i=0;i<results.length -1;i++)
                 add_list(String(i+1) +'. ' + results[i]);
             
