@@ -3,7 +3,9 @@ We can't trust online lottery since random process are modifiable. There should 
 
 # How to use
 - Install nodejs
-- Clone and Download this repo
+- Clone or Download this repo
 - `npm install`
 - `node app.js`
+- Install Chrome or Firefox
+- Install Metamask browser extension
 - Open http://localhost:8080
