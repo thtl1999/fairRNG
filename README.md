@@ -5,5 +5,5 @@ We can't trust online lottery since random process are modifiable. There should 
 - Install nodejs
 - Clone and Download this repo
 - `npm install`
-- `npm app.js`
+- `node app.js`
 - Open http://localhost:8080
